@@ -1,8 +1,4 @@
-using Microsoft.AspNetCore;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using EmployeeSupportSystem.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
