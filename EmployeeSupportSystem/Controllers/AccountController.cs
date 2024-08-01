@@ -9,6 +9,11 @@ namespace EmployeeSupportSystem.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly ILogger<AccountController> _logger;
+        public AccountController(ILogger<AccountController> logger)
+        {
+            _logger = logger;
+        }
         [HttpGet]
         public IActionResult Login()
         {
@@ -50,9 +55,29 @@ namespace EmployeeSupportSystem.Controllers
             return View(model);
         }
         [HttpGet]
-        public IActionResult Logout()
+        public IActionResult Signup()
         {
-            HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return View();
+        }
+        [HttpPost]
+        public IActionResult Signup(SignupViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = UserData.CreateUser(model.Id, model.Username, model.Password, out string errorMessage);
+                if (result)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Signup Successful for user : {model.Username}");
+                    return RedirectToAction("Login");
+                }
+                ModelState.AddModelError(string.Empty, errorMessage);
+            }
+            return View(model);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login");
         }
 

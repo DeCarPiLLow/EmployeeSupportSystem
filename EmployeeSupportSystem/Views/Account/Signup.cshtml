@@ -1,10 +1,10 @@
-﻿@model LoginViewModel
+﻿@model SignupViewModel
 
 @{
-    ViewData["Title"] = "Login"; 
+    ViewData["Title"] = "Signup";
 }
 
-<h2>Login</h2>
+<h2>Signup</h2>
 
 @if (ViewData.ModelState.Any(m => m.Value.Errors.Count > 0))
 {
@@ -16,8 +16,13 @@
     </div>
 }
 
-<form asp-action="Login" method="post">
-    <div class="form-group">    
+<form asp-action="Signup" method="post">
+    <div class="form-group">
+        <label asp-for="Id"></label>
+        <input asp-for="Id" class="form-control" />
+        <span asp-validation-for="Id" class="text-danger"></span>
+    </div>
+    <div class="form-group">
         <label asp-for="Username"></label>
         <input asp-for="Username" class="form-control" />
         <span asp-validation-for="Username" class="text-danger"></span>
@@ -27,6 +32,16 @@
         <input asp-for="Password" class="form-control" type="password" />
         <span asp-validation-for="Password" class="text-danger"></span>
     </div>
+    <div class="form-group">
+        <label asp-for="ConfirmPassword"></label>
+        <input asp-for="ConfirmPassword" class="form-control" />
+        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+    </div>
     <button type="submit" class="btn btn-primary">Login</button>
-    <p>Don't have an Account?'<a asp-action="Signup" asp-controller="Account">Sign up here.</a></p>
 </form>
+
+@section Scripts{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
