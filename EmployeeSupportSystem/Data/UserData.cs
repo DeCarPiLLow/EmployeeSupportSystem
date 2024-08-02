@@ -54,21 +54,13 @@ namespace EmployeeSupportSystem.Data
             return passwordPattern.IsMatch(password);
         }
 
-        public static List<Ticket> GetTicketsForUser(string userId)
+        public static List<Ticket> GetTicketsByUser(string userId)
         {
             return Tickets.Where(ticket => ticket.UserId == userId).ToList();   
         }
 
-        public static void CreateTicket(string userId, string subject, string description)
+        public static void AddTicket(Ticket ticket)
         {
-            var ticket = new Ticket
-            {
-                Id = (Tickets.Count + 1).ToString(),
-                UserId = userId,
-                Subject = subject,
-                Description = description,
-                Status = TicketStatus.Pending,
-            };
             Tickets.Add(ticket);
         }
     }

@@ -36,27 +36,44 @@ namespace EmployeeSupportSystem.Controllers
         [Authorize(Roles = "Employee")]
         public IActionResult EmployeePage()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var tickets = UserData.GetTicketsForUser(userId).Select(ticket => new TicketViewModel
+            var userId = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Name)?.Value;
+            var ticket = UserData.GetTicketsByUser(userId);
+
+            var viewModel = new EmployeeDashboardViewModel
             {
-                Id = ticket.Id,
-                Subject = ticket.Subject,
-                Description = ticket.Description,
-                Status = ticket.Status,
-            }).ToList();
-            return View(tickets);
+                Tickets = ticket,
+                NewTicket = new NewTicketViewModel()
+            };
+
+            return View(viewModel);
         }
 
         [HttpPost]
-        public IActionResult CreateTicket(CreateTicketViewModel model)
+        public IActionResult CreateTicket(NewTicketViewModel model)
         {
-            if (ModelState.IsValid)
+            var userId = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Name)?.Value;
+
+            var ticket = new Ticket
             {
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                UserData.CreateTicket(userId, model.Subject, model.Description);
-                return RedirectToAction("EmployeePage");
+                Id = System.Guid.NewGuid().ToString(),
+                UserId = userId,
+                Subject = model.Subject,
+                Description = model.Description,
+                Status = TicketStatus.Pending,
+            };
+
+            UserData.AddTicket(ticket);
+            return RedirectToAction("EmployeePage");
+        }
+
+        public IActionResult TicketDetails(string id)
+        {
+            var ticket = UserData.GetTicketsByUser(User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Name)?.Value).FirstOrDefault(t => t.Id == id);
+            if (ticket == null)
+            {
+                return NotFound();
             }
-            return View(model);
+            return View(ticket);
         }
 
         public IActionResult ListUsers()
