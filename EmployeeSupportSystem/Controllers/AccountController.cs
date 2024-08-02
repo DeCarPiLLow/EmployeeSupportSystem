@@ -24,7 +24,7 @@ namespace EmployeeSupportSystem.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = UserData.ValidateUser(model.Username, model.Password);
+                var user = UserData.ValidateUser(model.Id, model.Password);
                 if (user != null)
                 {
                     var claims = new List<Claim>

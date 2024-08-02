@@ -20,9 +20,9 @@ namespace EmployeeSupportSystem.Data
 
         private static List<Ticket> Tickets = new List<Ticket>();
 
-        public static User ValidateUser(string username, string password)
+        public static User ValidateUser(string id, string password)
         {
-            return Users.FirstOrDefault(u => u.Username == username && u.Password == password);
+            return Users.FirstOrDefault(u => u.Id == id && u.Password == password);
         }
 
         public static bool CreateUser(string id, string username, string password, out string errorMessage)
