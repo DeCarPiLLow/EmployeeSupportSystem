@@ -4,7 +4,7 @@
     {
         Admin,
         SupportAgent,
-        Empolyee
+        Employee
     }
     public class User
     {

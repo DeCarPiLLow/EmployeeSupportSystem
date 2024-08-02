@@ -43,8 +43,9 @@ namespace EmployeeSupportSystem.Controllers
                             return RedirectToAction("AdminPage", "Home");
                         case Role.SupportAgent:
                             return RedirectToAction("SupportAgentPage", "Home");
-                        case Role.Empolyee:
+                        case Role.Employee:
                             return RedirectToAction("EmployeePage", "Home");
+                           
                         default:
                             return RedirectToAction("Index", "Home");
                     }

@@ -1,7 +1,64 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿
 @{
+    ViewData["Title"] = "Employee Dashboard";
 }
-<h2>Employee Page</h2>
-<p>Welcome Employee</p>
+
+<h2>Employee Dashboard</h2>
+
+<h3>Your Tickets</h3>
+<div class="card-columns">
+    @foreach (var ticket in Model)
+    {
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Ticket @ticket.Id</h5>
+                <p class="card-text">@ticket.Subject</p>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#detailsModal-@ticket.Id">More Details</button>
+            </div>
+        </div>
+        <div class="modal fade" id="detailsModal-@ticket.Id" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="detailsModalLabel">Ticket @ticket.Id Details</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p><strong>Subject:</strong> @ticket.Subject</p>
+                        <p><strong>Description:</strong> @ticket.Description</p>
+                        <p><strong>Status:</strong> @ticket.Status</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<h3>Raise a New Ticket</h3>
+<form asp-action="CreateTicket" method="post">
+                <div class="form-group">
+                    <label asp-for="Subject"></label>
+                    <input asp-for="Subject" class="form-control" />
+                    <span asp-validation-for="Subject" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Description"></label>
+                    <input asp-for="Description" class="form-control" />
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }    
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12e5+6AdT6RrA8nBsy6jMGt5hDChjDHR+aK6G1GA7a6n6DBb" crossorigin="anonymous"></script>
+}

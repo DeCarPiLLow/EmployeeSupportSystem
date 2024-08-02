@@ -3,6 +3,7 @@ using EmployeeSupportSystem.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace EmployeeSupportSystem.Controllers
 {
@@ -25,15 +26,37 @@ namespace EmployeeSupportSystem.Controllers
         {
             return View();
         }
+
         [Authorize(Roles = "SupportAgent")]
         public IActionResult SupportAgentPage()
         {
             return View();
         }
+
         [Authorize(Roles = "Employee")]
         public IActionResult EmployeePage()
         {
-            return View();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var tickets = UserData.GetTicketsForUser(userId).Select(ticket => new TicketViewModel
+            {
+                Id = ticket.Id,
+                Subject = ticket.Subject,
+                Description = ticket.Description,
+                Status = ticket.Status,
+            }).ToList();
+            return View(tickets);
+        }
+
+        [HttpPost]
+        public IActionResult CreateTicket(CreateTicketViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                UserData.CreateTicket(userId, model.Subject, model.Description);
+                return RedirectToAction("EmployeePage");
+            }
+            return View(model);
         }
 
         public IActionResult ListUsers()
