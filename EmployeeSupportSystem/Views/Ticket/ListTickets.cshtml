@@ -1,0 +1,26 @@
+﻿@model IEnumerable<Ticket>
+
+@{
+    ViewData["Title"] = "List Ticket";
+}
+
+<h2>List of Users</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Subject</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var ticket in Model)
+        {
+            <tr>
+                <td>@ticket.Id</td>
+                <td>@ticket.Subject</td>
+                <td>@ticket.Description</td>
+            </tr>
+        }
+    </tbody>
+</table>

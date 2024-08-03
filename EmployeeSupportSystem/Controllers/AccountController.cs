@@ -14,11 +14,13 @@ namespace EmployeeSupportSystem.Controllers
         {
             _logger = logger;
         }
+
         [HttpGet]
         public IActionResult Login()
         {
             return View();
         }
+
         [HttpPost]
         public IActionResult Login(LoginViewModel model)
         {
@@ -51,15 +53,17 @@ namespace EmployeeSupportSystem.Controllers
                     }
 
                 }
-                ModelState.AddModelError(string.Empty, "Invalid Login Attemp.");
+                ModelState.AddModelError(string.Empty, "Invalid Login Attemp!!");
             }
             return View(model);
         }
+
         [HttpGet]
         public IActionResult Signup()
         {
             return View();
         }
+
         [HttpPost]
         public IActionResult Signup(SignupViewModel model)
         {
@@ -68,23 +72,18 @@ namespace EmployeeSupportSystem.Controllers
                 var result = UserData.CreateUser(model.Id, model.Username, model.Password, out string errorMessage);
                 if (result)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Signup Successful for user : {model.Username}");
                     return RedirectToAction("Login");
                 }
                 ModelState.AddModelError(string.Empty, errorMessage);
             }
             return View(model);
         }
+
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login");
-        }
-
-        public IActionResult Index()
-        {
-            return View();
         }
     }
 }

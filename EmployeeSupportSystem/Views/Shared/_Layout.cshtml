@@ -22,8 +22,36 @@
                         @* <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li> *@
+
                         @if (User.Identity.IsAuthenticated)
                         {
+                            if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="AdminPage">Admin</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="ListUsers">User List</a>
+                                </li>
+                            }
+                            else if (User.IsInRole("SupportAgent"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="SupportAgentPage">Support Agent</a>
+                                </li>
+                            }
+                            else if (User.IsInRole("Employee"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="EmployeePage">Employee</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Ticket" asp-action="CreateTicket">Create New Ticket</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Ticket" asp-action="ListTickets">Ticket List</a>
+                                </li>
+                            }
                             <li class="nav-item">
                                 <form asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" class="form-inline">
                                     <button type="submit" class="btn btn-link nav-link" style="padding: 0; border: none; cursor: pointer;">Logout</button>
@@ -32,7 +60,9 @@
                         }
                         else
                         {
-                            
+                            <li class="nav-items">
+                                <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
+                            </li>   
                         }
                     </ul>
                 </div>

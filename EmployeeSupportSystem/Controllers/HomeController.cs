@@ -1,5 +1,6 @@
 using EmployeeSupportSystem.Data;
 using EmployeeSupportSystem.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -16,7 +17,8 @@ namespace EmployeeSupportSystem.Controllers
         {
             _logger = logger;
         }
-        public IActionResult Index()
+
+        public IActionResult index()
         {
             return View();
         }
@@ -27,6 +29,9 @@ namespace EmployeeSupportSystem.Controllers
             return View();
         }
 
+        [HttpPost]
+        [Authorize(Roles ="Admin")]
+
         [Authorize(Roles = "SupportAgent")]
         public IActionResult SupportAgentPage()
         {
@@ -36,46 +41,10 @@ namespace EmployeeSupportSystem.Controllers
         [Authorize(Roles = "Employee")]
         public IActionResult EmployeePage()
         {
-            var userId = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Name)?.Value;
-            var ticket = UserData.GetTicketsByUser(userId);
-
-            var viewModel = new EmployeeDashboardViewModel
-            {
-                Tickets = ticket,
-                NewTicket = new NewTicketViewModel()
-            };
-
-            return View(viewModel);
+            return View();
         }
 
-        [HttpPost]
-        public IActionResult CreateTicket(NewTicketViewModel model)
-        {
-            var userId = User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Name)?.Value;
-
-            var ticket = new Ticket
-            {
-                Id = System.Guid.NewGuid().ToString(),
-                UserId = userId,
-                Subject = model.Subject,
-                Description = model.Description,
-                Status = TicketStatus.Pending,
-            };
-
-            UserData.AddTicket(ticket);
-            return RedirectToAction("EmployeePage");
-        }
-
-        public IActionResult TicketDetails(string id)
-        {
-            var ticket = UserData.GetTicketsByUser(User.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.Name)?.Value).FirstOrDefault(t => t.Id == id);
-            if (ticket == null)
-            {
-                return NotFound();
-            }
-            return View(ticket);
-        }
-
+        [Authorize(Roles = "Admin")]
         public IActionResult ListUsers()
         {
             var users = UserData.GetAllUsers();

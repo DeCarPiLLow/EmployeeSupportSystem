@@ -8,7 +8,7 @@ namespace EmployeeSupportSystem.Models
         [Display(Name = "ID")]
         public string Id { get; set; }
         [Required]
-        [Display(Name = "Usename")]
+        [Display(Name = "Username")]
         [StringLength(50, MinimumLength = 4)]
         public string Username { get; set; }
         [Required]
