@@ -26,16 +26,28 @@
                 <td>@ticket.Subject</td>
                 <td>@ticket.Status</td>
                 <td>
-                    <form asp-action="AssignTicket" method="post">
-                        <input type="hidden" name="ticketId" value="@ticket.TicketID" />
-                        <select name="assignee" class="form-control">
-                            @foreach (var user in Model.Users)
-                            {
-                                <option value="@user.Username">@user.Username</option>
-                            }
-                        </select>
-                        <button type="submit" class="btn btn-primary">Assign</button>
-                    </form>
+                    @if(ticket.Status == TicketStatus.Pending)
+                    {
+                        <form asp-action="AssignTicket" method="post">
+                            <input type="hidden" name="ticketId" value="@ticket.TicketID" />
+                            <select name="assignee" class="form-control">
+                                @foreach (var user in Model.Users)
+                                {
+                                    <option value="@user.Username">
+                                        @if (user.UserRole == Role.SupportAgent)
+                                        {
+                                            @user.Username
+                                        }
+                                    </option>
+                                }
+                            </select>
+                            <button type="submit" class="btn btn-primary">Assign</button>
+                        </form>
+                    }
+                    else
+                    {
+                        @ticket.AssignedTo
+                    }
                 </td>
             </tr>
         }
