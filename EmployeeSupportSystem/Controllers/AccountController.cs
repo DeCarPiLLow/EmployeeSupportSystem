@@ -89,5 +89,7 @@ namespace EmployeeSupportSystem.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme); // Sign out the user
             return RedirectToAction("Login"); // Redirect to Login page after logout
         }
+
+
     }
 }

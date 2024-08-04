@@ -48,6 +48,9 @@
                                 <li class="nav-item">
                                     <a class="nav-link" asp-area="" asp-controller="Home" asp-action="CreateNewTicket">Create New Ticket</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="@Url.Action("Analytics", "Home")">View My Ticket Analytics</a>
+                                </li>
                             }
                             <li class="nav-item">
                                 <form asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" class="form-inline">
