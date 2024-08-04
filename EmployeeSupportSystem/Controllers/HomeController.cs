@@ -1,10 +1,9 @@
 using EmployeeSupportSystem.Data;
 using EmployeeSupportSystem.Models;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using System.Security.Claims;
+using System.Net.Sockets;
 
 namespace EmployeeSupportSystem.Controllers
 {
@@ -50,6 +49,33 @@ namespace EmployeeSupportSystem.Controllers
             return View(tickets);
         }
 
+        [Authorize(Roles = "Employee")]
+        public IActionResult CreateNewTicket()
+        {
+            return View(new CreateNewTicketViewModel());
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Employee")]
+        public IActionResult CreateNewTicket(CreateNewTicketViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var ticket = new Ticket
+                {
+                    TicketID = Guid.NewGuid().ToString(),
+                    CreatedBy = User.Identity.Name,
+                    Subject = model.Subject,
+                    Description = model.Description,
+                    Status = TicketStatus.Pending,
+                    CreatedAt = DateTime.Now,
+                };
+                TicketData.AddTicket(ticket);
+                return RedirectToAction("EmployeePage");
+            }
+            return View(model);
+        }
+
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public IActionResult AssignTicket(string ticketId, string assignee)
@@ -77,7 +103,7 @@ namespace EmployeeSupportSystem.Controllers
             return RedirectToAction("SupportAgentPage");
         }
 
-    [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public IActionResult ListUsers()
         {
             var users = UserData.GetAllUsers();
