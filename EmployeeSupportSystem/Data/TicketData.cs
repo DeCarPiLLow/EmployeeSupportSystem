@@ -26,15 +26,25 @@
             Tickets.Add(ticket); // Adds a new ticket to the list
         }
 
+
         public static void UpdateTicket(Ticket updatedTicket)
         {
-            var ticket = Tickets.FirstOrDefault(t => t.TicketID == updatedTicket.TicketID); // Find the ticket to update by ID
+            var ticket = Tickets.FirstOrDefault(t => t.TicketID == updatedTicket.TicketID);// Find the ticket to update by ID
             if (ticket != null)
             {
                 ticket.AssignedTo = updatedTicket.AssignedTo; // Update the assignee
                 ticket.Status = updatedTicket.Status; // Update the status
                 ticket.ResolvedAt = updatedTicket.ResolvedAt; // Update the resolved timestamp
+                if (updatedTicket.Status == TicketStatus.Assigned)
+                {
+                    ticket.AssignedAt = DateTime.Now;
+                }
+                if (updatedTicket.Status == TicketStatus.Active)
+                {
+                    ticket.ActiveAt = DateTime.Now;
+                }
             }
         }
+
     }
 }

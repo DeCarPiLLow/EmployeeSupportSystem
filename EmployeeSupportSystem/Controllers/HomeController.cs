@@ -107,12 +107,20 @@ namespace EmployeeSupportSystem.Controllers
             var ticket = TicketData.GetAllTickets().FirstOrDefault(t => t.TicketID == ticketId); // Find the ticket by ID
             if (ticket != null)
             {
-                ticket.Status = status; // Update the ticket status
-                if (status == TicketStatus.Resolved)
+                ticket.Status = status;
+                if (status == TicketStatus.Assigned)
                 {
-                    ticket.ResolvedAt = DateTime.Now; // Set the resolved timestamp if the status is resolved
+                    ticket.AssignedAt = DateTime.Now;
                 }
-                TicketData.UpdateTicket(ticket); // Update the ticket in the data store
+                else if (status == TicketStatus.InProgress)
+                {
+                    ticket.ActiveAt = DateTime.Now;
+                }
+                else if (status == TicketStatus.Resolved)
+                {
+                    ticket.ResolvedAt = DateTime.Now;
+                }
+                TicketData.UpdateTicket(ticket);
             }
             return RedirectToAction("SupportAgentPage"); // Redirect to SupportAgentPage after updating the ticket status
         }
@@ -128,6 +136,28 @@ namespace EmployeeSupportSystem.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier }); // Returns the Error view with the request ID
+        }
+        [Authorize(Roles = "Employee")]
+        public IActionResult Analytics()
+        {
+            var userId = User.Identity.Name;
+            var tickets = TicketData.GetTicketsByCreator(userId);
+
+            var viewModel = tickets.Select(t => new TicketAnalyticsViewModel
+            {
+                TicketID = t.TicketID,
+                TimePending = t.AssignedAt.HasValue ? (t.AssignedAt.Value - t.CreatedAt).TotalHours : 0,
+                TimeAllocated = t.ActiveAt.HasValue && t.AssignedAt.HasValue ? (t.ActiveAt.Value - t.AssignedAt.Value).TotalHours : 0,
+                TimeActive = t.ResolvedAt.HasValue && t.ActiveAt.HasValue ? (t.ResolvedAt.Value - t.ActiveAt.Value).TotalHours : 0,
+                TimeResolved = t.ResolvedAt.HasValue ? (t.ResolvedAt.Value - t.CreatedAt).TotalHours : 0
+            }).ToList();
+
+            if (!viewModel.Any())
+            {
+                return RedirectToAction("Index", "Home"); // Redirect if no tickets are found
+            }
+
+            return View(viewModel);
         }
     }
 }

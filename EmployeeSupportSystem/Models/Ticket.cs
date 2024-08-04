@@ -2,9 +2,13 @@
 
 public enum TicketStatus
 {
-    Pending,
+    //Pending,
     Assigned,
     InProgress,
+    //Resolved,
+    Pending,
+    Allocated, 
+    Active,
     Resolved
 }
 
@@ -17,5 +21,7 @@ public class Ticket
     public string Description { get; set; }
     public TicketStatus Status { get; set; }
     public DateTime CreatedAt { get; set; }
-    public DateTime? ResolvedAt { get; set; }
+    public DateTime? AssignedAt { get; set; } // Timestamp for when the ticket is assigned
+    public DateTime? ActiveAt { get; set; }   // Timestamp for when the ticket becomes active
+    public DateTime? ResolvedAt { get; set; } // Timestamp for when the ticket is resolved
 }
