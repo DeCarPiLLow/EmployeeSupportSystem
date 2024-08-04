@@ -1,41 +1,68 @@
-﻿@model IEnumerable<Ticket>
+﻿@model SupportAgentViewModel
  
 @{
-    ViewData["Title"] = "Support Agent Page";
+    ViewData["Title"] = "Support Agent";
 }
  
-<h2>Support Agent Page</h2>
-<p>Welcome, Support Agent! Here you can view and manage your tickets.</p>
+<h2>Support Agent Dashboard</h2>
  
+<h3>Pending Tickets</h3>
 <table class="table">
     <thead>
         <tr>
             <th>Ticket ID</th>
             <th>Subject</th>
+            <th>Description</th>
             <th>Status</th>
             <th>Actions</th>
         </tr>
     </thead>
-    @* <tbody>
-        @foreach (var ticket in Model)
+    <tbody>
+        @foreach (var ticket in Model.PendingTickets)
         {
             <tr>
                 <td>@ticket.TicketID</td>
                 <td>@ticket.Subject</td>
+                <td>@ticket.Description</td>
                 <td>@ticket.Status</td>
                 <td>
                     <form asp-action="UpdateTicketStatus" method="post">
-                        <input type="hidden" name="ticketId" value="@ticket.TicketID" />
-                        <select name="status" class="form-control">
-                            <option value="Pending" @(ticket.Status == TicketStatus.Pending ? "selected" : "")>Pending</option>
-                            <option value="Assigned" @(ticket.Status == TicketStatus.Assigned ? "selected" : "")>Assigned</option>
-                            <option value="InProgress" @(ticket.Status == TicketStatus.InProgress ? "selected" : "")>In Progress</option>
-                            <option value="Resolved" @(ticket.Status == TicketStatus.Resolved ? "selected" : "")>Resolved</option>
-                        </select>
-                        <button type="submit" class="btn btn-primary">Update</button>
-                    </form>
+                    <input type="hidden" name="ticketId" value="@ticket.TicketID" />
+                    <select name="status" class="form-control">
+                        <option value="InProgress">
+                            In Progress
+                        </option>
+                        <option value="Resolved">
+                            Resolved
+                        </option>
+                    </select>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </form>
                 </td>
             </tr>
         }
-    </tbody> *@
+    </tbody>
+</table>
+ 
+<h3>Resolved Tickets</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Ticket ID</th>
+            <th>Subject</th>
+            <th>Description</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+            @foreach (var ticket in Model.ResolvedTickets)
+            {
+                <tr>
+                    <td>@ticket.TicketID</td>
+                    <td>@ticket.Subject</td>
+                    <td>@ticket.Description</td>
+                    <td>@ticket.Status</td>
+                </tr>
+            }
+    </tbody>
 </table>

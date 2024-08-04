@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Net.Sockets;
+using System.Collections.Generic;
 
 namespace EmployeeSupportSystem.Controllers
 {
@@ -39,7 +40,14 @@ namespace EmployeeSupportSystem.Controllers
         public IActionResult SupportAgentPage()
         {
             var tickets = TicketData.GetTicketsByAssignee(User.Identity.Name);
-            return View(tickets);
+            var resolvedTickets = tickets.Where(t => t.Status == TicketStatus.Resolved).ToList();
+            var pendingTickets = tickets.Where(t => t.Status != TicketStatus.Resolved).ToList();
+            var viewModel = new SupportAgentViewModel
+            {
+                ResolvedTickets = resolvedTickets,
+                PendingTickets = pendingTickets
+            };
+            return View(viewModel);
         }
 
         [Authorize(Roles = "Employee")]
@@ -82,7 +90,11 @@ namespace EmployeeSupportSystem.Controllers
         {
             var ticket = TicketData.GetAllTickets().FirstOrDefault(t => t.TicketID == ticketId);
             if (ticket != null)
-            { ticket.AssignedTo = assignee; ticket.Status = TicketStatus.Assigned; TicketData.UpdateTicket(ticket); }
+            { 
+                ticket.AssignedTo = assignee;
+                ticket.Status = TicketStatus.Assigned; 
+                TicketData.UpdateTicket(ticket); 
+            }
             return RedirectToAction("AdminPage");
         }
 
