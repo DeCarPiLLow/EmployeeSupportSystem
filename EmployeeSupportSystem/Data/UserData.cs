@@ -8,7 +8,7 @@ namespace EmployeeSupportSystem.Data
 {
     public static class UserData
     {
-        private static List<User> Users = new List<User>
+        public static List<User> Users = new List<User>
         {
             new User { Id = "1", Username = "admin", Password = "admin123", UserRole = Role.Admin },
             new User { Id = "2", Username = "agent", Password = "agent1", UserRole = Role.SupportAgent },

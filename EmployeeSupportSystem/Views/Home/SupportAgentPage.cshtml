@@ -1,16 +1,41 @@
-﻿@model List<Ticket>
-
+﻿@model IEnumerable<Ticket>
+ 
 @{
-
     ViewData["Title"] = "Support Agent Page";
-
 }
  
 <h2>Support Agent Page</h2>
+<p>Welcome, Support Agent! Here you can view and manage your tickets.</p>
  
-<p>Welcome, Support Agent! Here you can view your resolved and pending tickets.</p>
- 
-<!-- Resolved Tickets Section -->
-
-
- 
+<table class="table">
+    <thead>
+        <tr>
+            <th>Ticket ID</th>
+            <th>Subject</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    @* <tbody>
+        @foreach (var ticket in Model)
+        {
+            <tr>
+                <td>@ticket.TicketID</td>
+                <td>@ticket.Subject</td>
+                <td>@ticket.Status</td>
+                <td>
+                    <form asp-action="UpdateTicketStatus" method="post">
+                        <input type="hidden" name="ticketId" value="@ticket.TicketID" />
+                        <select name="status" class="form-control">
+                            <option value="Pending" @(ticket.Status == TicketStatus.Pending ? "selected" : "")>Pending</option>
+                            <option value="Assigned" @(ticket.Status == TicketStatus.Assigned ? "selected" : "")>Assigned</option>
+                            <option value="InProgress" @(ticket.Status == TicketStatus.InProgress ? "selected" : "")>In Progress</option>
+                            <option value="Resolved" @(ticket.Status == TicketStatus.Resolved ? "selected" : "")>Resolved</option>
+                        </select>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody> *@
+</table>

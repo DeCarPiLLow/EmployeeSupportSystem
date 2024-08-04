@@ -26,25 +26,58 @@ namespace EmployeeSupportSystem.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult AdminPage()
         {
-            return View();
+            var ticket = TicketData.GetAllTickets();
+            var user = UserData.GetAllUsers();
+            var viewModel = new AdminViewModel
+            {
+                Tickets = ticket,
+                Users = user,
+            };
+            return View(viewModel);
         }
-
-        [HttpPost]
-        [Authorize(Roles ="Admin")]
 
         [Authorize(Roles = "SupportAgent")]
         public IActionResult SupportAgentPage()
         {
-            return View();
+            var tickets = TicketData.GetTicketsByAssignee(User.Identity.Name);
+            return View(tickets);
         }
 
         [Authorize(Roles = "Employee")]
         public IActionResult EmployeePage()
         {
-            return View();
+            var tickets = TicketData.GetTicketsByCreator(User.Identity.Name);
+            return View(tickets);
         }
 
+        [HttpPost]
         [Authorize(Roles = "Admin")]
+        public IActionResult AssignTicket(string ticketId, string assignee)
+        {
+            var ticket = TicketData.GetAllTickets().FirstOrDefault(t => t.TicketID == ticketId);
+            if (ticket != null)
+            { ticket.AssignedTo = assignee; ticket.Status = TicketStatus.Assigned; TicketData.UpdateTicket(ticket); }
+            return RedirectToAction("AdminPage");
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "SupportAgent")]
+        public IActionResult UpdateTicketStatus(string ticketId, TicketStatus status)
+        {
+            var ticket = TicketData.GetAllTickets().FirstOrDefault(t => t.TicketID == ticketId);
+            if (ticket != null)
+            {
+                ticket.Status = status;
+                if (status == TicketStatus.Resolved)
+                {
+                    ticket.ResolvedAt = DateTime.Now;
+                }
+                TicketData.UpdateTicket(ticket);
+            }
+            return RedirectToAction("SupportAgentPage");
+        }
+
+    [Authorize(Roles = "Admin")]
         public IActionResult ListUsers()
         {
             var users = UserData.GetAllUsers();

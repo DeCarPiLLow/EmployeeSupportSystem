@@ -1,8 +1,42 @@
-﻿@model List<Ticket>
+﻿@model IEnumerable<Ticket>
+
 @{
     ViewData["Title"] = "Employee Page";
 }
 
 <h2>Employee Page</h2>
-
 <p>Welcome, Employee! Here you can view your resolved tickets and create new tickets.</p>
+@*
+<h3>Create a New Ticket</h3>
+<form asp-action="CreateTicket" method="post">
+    <div class="form-group">
+        <label asp-for="Subject"></label>
+        <input asp-for="Subject" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Description"></label>
+<textarea asp-for="Description" class="form-control"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Create Ticket</button>
+</form> *@
+
+<h3>Your Tickets</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Ticket ID</th>
+            <th>Subject</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var ticket in Model)
+        {
+            <tr>
+                <td>@ticket.TicketID</td>
+                <td>@ticket.Subject</td>
+                <td>@ticket.Status</td>
+            </tr>
+        }
+    </tbody>
+</table>

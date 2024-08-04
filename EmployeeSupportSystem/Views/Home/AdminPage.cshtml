@@ -1,8 +1,43 @@
-﻿@* @model List<User, Ticket>
- *@
+﻿@model AdminViewModel
 
 @{
-
     ViewData["Title"] = "Admin Page";
-
 }
+
+<h2>Admin Page</h2>
+<p>Welcome, Admin! Here you can manage users and allocate tickets.</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Ticket ID</th>
+            <th>Created By</th>
+            <th>Subject</th>
+            <th>Status</th>
+            <th>Assign To</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var ticket in Model.Tickets)
+        {
+            <tr>
+                <td>@ticket.TicketID</td>
+                <td>@ticket.CreatedBy</td>
+                <td>@ticket.Subject</td>
+                <td>@ticket.Status</td>
+                <td>
+                    <form asp-action="AssignTicket" method="post">
+                        <input type="hidden" name="ticketId" value="@ticket.TicketID" />
+                        <select name="assignee" class="form-control">
+                            @foreach (var user in Model.Users)
+                            {
+                                <option value="@user.Username">@user.Username</option>
+                            }
+                        </select>
+                        <button type="submit" class="btn btn-primary">Assign</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
