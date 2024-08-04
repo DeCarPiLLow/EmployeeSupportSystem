@@ -29,12 +29,18 @@
                     <form asp-action="UpdateTicketStatus" method="post">
                     <input type="hidden" name="ticketId" value="@ticket.TicketID" />
                     <select name="status" class="form-control">
-                        <option value="InProgress">
-                            In Progress
-                        </option>
-                        <option value="Resolved">
-                            Resolved
-                        </option>
+                            @if(ticket.Status == TicketStatus.Assigned)
+                            {
+                                <option value="InProgress">
+                                    In Progress
+                                </option>
+                            }
+                            else if(ticket.Status == TicketStatus.InProgress)
+                            {
+                                <option value="Resolved">
+                                    Resolved
+                                </option>
+                            } 
                     </select>
                     <button type="submit" class="btn btn-primary">Update</button>
                 </form>

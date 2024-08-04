@@ -108,6 +108,10 @@ namespace EmployeeSupportSystem.Controllers
             if (ticket != null)
             {
                 ticket.Status = status; // Update the ticket status
+                if (status == TicketStatus.InProgress)
+                {
+                    ticket.InProgressAt = DateTime.Now; // Set the when the support start working on it
+                }
                 if (status == TicketStatus.Resolved)
                 {
                     ticket.ResolvedAt = DateTime.Now; // Set the resolved timestamp if the status is resolved

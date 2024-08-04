@@ -17,5 +17,6 @@ public class Ticket
     public string Description { get; set; }
     public TicketStatus Status { get; set; }
     public DateTime CreatedAt { get; set; }
+    public DateTime InProgressAt { get; set; }
     public DateTime? ResolvedAt { get; set; }
 }
