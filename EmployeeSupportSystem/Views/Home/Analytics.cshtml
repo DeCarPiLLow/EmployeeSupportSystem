@@ -1,0 +1,61 @@
+﻿@{
+    ViewData["Title"] = "Accomodation";
+}
+<html>
+<head>
+    <title>Stacked Bar Chart Example</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+</head>
+<body>
+    <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
+
+    <script>
+        new Chart("myChart", {
+            type: "bar",
+            data: {
+                labels: ["Ticket 1","Ticket 2"], // Label for the single ticket
+                datasets: [
+                    {
+                        label: "Pending",
+                        data: [4,3], // Duration in hours or another unit
+                        backgroundColor: "rgba(255, 99, 132, 0.6)"
+                    },
+                    {
+                        label: "Allocated",
+                        data: [3,2], // Duration in hours or another unit
+                        backgroundColor: "rgba(54, 162, 235, 0.6)"
+                    },
+                    {
+                        label: "Active",
+                        data: [3,1], // Duration in hours or another unit
+                        backgroundColor: "rgba(255, 206, 86, 0.6)"
+                    },
+                    {
+                        label: "Resolved",
+                        data: [2,1], // Duration in hours or another unit
+                        backgroundColor: "rgba(75, 192, 15, 0.6)"
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    xAxes: [{
+                        stacked: true,
+                        ticks: { beginAtZero: true }
+                    }],
+                    yAxes: [{
+                        stacked: true,
+                        ticks: { beginAtZero: true }
+                    }]
+                },
+                legend: { display: true },
+                title: {
+                    display: true,
+                    text: 'Support Ticket Status'
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+
