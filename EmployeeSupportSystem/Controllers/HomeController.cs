@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Authorization; // Using ASP.NET Core authorization fr
 using Microsoft.AspNetCore.Mvc; // Using ASP.NET Core MVC framework
 using System.Diagnostics; // Using system diagnostics
 using System.Net.Sockets; // Using network-related functionality
-using System.Collections.Generic; // Using collections functionality
+using System.Collections.Generic;
+using Microsoft.Extensions.Configuration.UserSecrets; // Using collections functionality
 
 namespace EmployeeSupportSystem.Controllers
 {
@@ -137,9 +138,11 @@ namespace EmployeeSupportSystem.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier }); // Returns the Error view with the request ID
         }
+
         [Authorize(Roles = "Employee")]
         public IActionResult Analytics()
         {
+
             var userId = User.Identity.Name;
             var tickets = TicketData.GetTicketsByCreator(userId);
 
