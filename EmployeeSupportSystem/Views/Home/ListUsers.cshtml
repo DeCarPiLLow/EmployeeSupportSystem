@@ -1,31 +1,4 @@
-﻿@* @model IEnumerable<User>
-
-@{
-    ViewData["Title"] = "List Users";
-}
-
-<h2>List of Users</h2>
-<table>
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>Username</th>
-            <th>User Role</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var user in Model)
-        {
-            <tr>
-                <td>@user.Id</td>
-                <td>@user.Username</td>
-                <td>@user.UserRole</td>
-            </tr>
-        }
-    </tbody>
-</table> *@
-
-@model IEnumerable<User>
+﻿@model IEnumerable<User>
 
 @{
     ViewData["Title"] = "List Users";
