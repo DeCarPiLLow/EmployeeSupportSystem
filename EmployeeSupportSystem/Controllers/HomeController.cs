@@ -146,6 +146,30 @@ namespace EmployeeSupportSystem.Controllers
             var userId = User.Identity.Name;
             var tickets = TicketData.GetTicketsByCreator(userId);
 
+            
+            var viewModel = tickets.Select(t => new TicketAnalyticsViewModel
+            {
+                TicketID = t.Subject,
+                TimePending = t.AssignedAt.HasValue ? (t.AssignedAt.Value - t.CreatedAt).TotalHours : 0,
+                TimeAllocated = t.ActiveAt.HasValue && t.AssignedAt.HasValue ? (t.ActiveAt.Value - t.AssignedAt.Value).TotalHours : 0,
+                TimeActive = t.ResolvedAt.HasValue && t.ActiveAt.HasValue ? (t.ResolvedAt.Value - t.ActiveAt.Value).TotalHours : 0,
+                TimeResolved = t.ResolvedAt.HasValue ? (t.ResolvedAt.Value - t.CreatedAt).TotalHours : 0
+            }).ToList();
+
+            //if (!viewModel.Any())
+            //{
+            //    return RedirectToAction("Index", "Home"); // Redirect if no tickets are found
+            //}
+
+            return View(viewModel);
+        }
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult AdminAnalytics()
+        {
+
+            var tickets = TicketData.GetAllTickets();
+
             var viewModel = tickets.Select(t => new TicketAnalyticsViewModel
             {
                 TicketID = t.Subject,

@@ -13,6 +13,7 @@ namespace EmployeeSupportSystem.Data
         {
             new User { Id = "1", Username = "admin", Password = "admin123", UserRole = Role.Admin },
             new User { Id = "2", Username = "agent", Password = "agent1", UserRole = Role.SupportAgent },
+            new User { Id = "5", Username = "agent2", Password = "agent2", UserRole = Role.SupportAgent },
             new User { Id = "3", Username = "emp1", Password = "emp1", UserRole = Role.Employee },
             new User { Id = "4", Username = "emp2", Password = "emp2", UserRole = Role.Employee }
         };

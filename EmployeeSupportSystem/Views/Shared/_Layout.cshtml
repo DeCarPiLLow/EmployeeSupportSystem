@@ -33,6 +33,9 @@
                                 <li class="nav-item">
                                     <a class="nav-link" asp-area="" asp-controller="Home" asp-action="ListUsers">User List</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="AdminAnalytics">View Ticket Analytics</a>
+                                </li>
                             }
                             else if (User.IsInRole("SupportAgent"))
                             {
@@ -49,7 +52,7 @@
                                     <a class="nav-link" asp-area="" asp-controller="Home" asp-action="CreateNewTicket">Create New Ticket</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="@Url.Action("Analytics", "Home")">View My Ticket Analytics</a>
+                                    <a class="nav-link"asp-area="" asp-controller="Home" asp-action="Analytics">View My Ticket Analytics</a>
                                 </li>
                             }
                             <li class="nav-item ms-auto mt-2">

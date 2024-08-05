@@ -12,6 +12,7 @@
         <tr>
             <th>Ticket ID</th>
             <th>Created By</th>
+            <th>Creation Time</th>
             <th>Subject</th>
             <th>Status</th>
             <th>Assign To</th>
@@ -23,6 +24,7 @@
             <tr>
                 <td>@ticket.TicketID</td>
                 <td>@ticket.CreatedBy</td>
+                <td>@ticket.CreatedAt</td>
                 <td>@ticket.Subject</td>
                 <td>@ticket.Status</td>
                 <td>
@@ -33,12 +35,15 @@
                             <select name="assignee" class="form-control">
                                 @foreach (var user in Model.Users)
                                 {
-                                    <option value="@user.Username">
-                                        @if (user.UserRole == Role.SupportAgent)
-                                        {
-                                            @user.Username
-                                        }
-                                    </option>
+                                    if(user.UserRole == Role.SupportAgent)
+                                    {
+                                        <option value="@user.Username">
+                                            @if (user.UserRole == Role.SupportAgent)
+                                            {
+                                                @user.Username
+                                            }
+                                        </option>
+                                    }
                                 }
                             </select>
                             <button type="submit" class="btn btn-primary">Assign</button>
