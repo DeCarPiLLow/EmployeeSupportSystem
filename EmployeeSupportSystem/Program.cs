@@ -5,9 +5,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+// Configure cookie authentication
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
 {
+    // Set the login path to redirect users to when they are not authenticated
     options.LoginPath = "/Account/Login";
+    // Set the logout path to redirect users to when they log out
     options.LogoutPath = "/Account/Logout";
 });
 
