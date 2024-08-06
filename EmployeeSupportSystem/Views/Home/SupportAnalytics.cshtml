@@ -1,0 +1,68 @@
+﻿@model IEnumerable<TicketAnalyticsViewModel>
+
+@{
+    ViewData["Title"] = "Ticket Analytics";
+}
+
+<h2>Ticket Analytics of Agents</h2>
+
+<canvas id="ticketBarChart" width="400" height="200"></canvas>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        var labels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Select(m => m.TicketID)));
+        var timePending = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Select(m => m.TimePending)));
+        var timeAllocated = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Select(m => m.TimeAllocated)));
+        var timeActive = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Select(m => m.TimeActive)));
+        var timeResolved = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Select(m => m.TimeResolved)));
+
+        var ctx = document.getElementById('ticketBarChart').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Time Pending',
+                    data: timePending,
+                    backgroundColor: 'rgba(255, 0, 0, 0.8)',
+                    stack: 'stack0'
+                }, {
+                    label: 'Time Allocated',
+                    data: timeAllocated,
+                    backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                    stack: 'stack0'
+                }, {
+                    label: 'Time Active',
+                    data: timeActive,
+                    backgroundColor: 'rgba(0, 206, 86, 0.8)',
+                    stack: 'stack0'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (tooltipItem) {
+                                return tooltipItem.dataset.label + ': ' + tooltipItem.raw + ' hrs';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+}
