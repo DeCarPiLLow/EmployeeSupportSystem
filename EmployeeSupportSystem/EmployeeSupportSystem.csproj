@@ -7,6 +7,52 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="obj\Debug\net8.0\.NETCoreApp,Version=v8.0.AssemblyAttributes.cs" />
+    <Compile Include="obj\Debug\net8.0\EmployeeSupportSystem.AssemblyInfo.cs" />
+    <Compile Include="obj\Debug\net8.0\EmployeeSupportSystem.GlobalUsings.g.cs" />
+    <Compile Include="obj\Debug\net8.0\EmployeeSupportSystem.RazorAssemblyInfo.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="obj\Debug\net8.0\EmployeeSupportSystem.csproj.FileListAbsolute.txt" />
+    <Content Include="obj\Debug\net8.0\EmployeeSupportSystem.sourcelink.json" />
+    <Content Include="obj\Debug\net8.0\scopedcss\bundle\EmployeeSupportSystem.styles.css" />
+    <Content Include="obj\Debug\net8.0\scopedcss\projectbundle\EmployeeSupportSystem.bundle.scp.css" />
+    <Content Include="obj\Debug\net8.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css" />
+    <Content Include="obj\Debug\net8.0\staticwebassets.build.json" />
+    <Content Include="obj\Debug\net8.0\staticwebassets.development.json" />
+    <Content Include="obj\Debug\net8.0\staticwebassets.pack.json" />
+    <Content Include="obj\EmployeeSupportSystem.csproj.nuget.dgspec.json" />
+    <Content Include="obj\project.assets.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="obj\Debug\net8.0\apphost.exe" />
+    <None Include="obj\Debug\net8.0\Employee.E693CE7A.Up2Date" />
+    <None Include="obj\Debug\net8.0\EmployeeSupportSystem.AssemblyInfoInputs.cache" />
+    <None Include="obj\Debug\net8.0\EmployeeSupportSystem.assets.cache" />
+    <None Include="obj\Debug\net8.0\EmployeeSupportSystem.csproj.AssemblyReference.cache" />
+    <None Include="obj\Debug\net8.0\EmployeeSupportSystem.csproj.BuildWithSkipAnalyzers" />
+    <None Include="obj\Debug\net8.0\EmployeeSupportSystem.csproj.CoreCompileInputs.cache" />
+    <None Include="obj\Debug\net8.0\EmployeeSupportSystem.dll" />
+    <None Include="obj\Debug\net8.0\EmployeeSupportSystem.GeneratedMSBuildEditorConfig.editorconfig" />
+    <None Include="obj\Debug\net8.0\EmployeeSupportSystem.genruntimeconfig.cache" />
+    <None Include="obj\Debug\net8.0\EmployeeSupportSystem.MvcApplicationPartsAssemblyInfo.cache" />
+    <None Include="obj\Debug\net8.0\EmployeeSupportSystem.pdb" />
+    <None Include="obj\Debug\net8.0\EmployeeSupportSystem.RazorAssemblyInfo.cache" />
+    <None Include="obj\Debug\net8.0\project.razor.vs.bin" />
+    <None Include="obj\Debug\net8.0\refint\EmployeeSupportSystem.dll" />
+    <None Include="obj\Debug\net8.0\ref\EmployeeSupportSystem.dll" />
+    <None Include="obj\Debug\net8.0\staticwebassets\msbuild.build.EmployeeSupportSystem.props" />
+    <None Include="obj\Debug\net8.0\staticwebassets\msbuild.buildMultiTargeting.EmployeeSupportSystem.props" />
+    <None Include="obj\Debug\net8.0\staticwebassets\msbuild.buildTransitive.EmployeeSupportSystem.props" />
+    <None Include="obj\Debug\net8.0\staticwebassets\msbuild.EmployeeSupportSystem.Microsoft.AspNetCore.StaticWebAssets.props" />
+    <None Include="obj\EmployeeSupportSystem.csproj.nuget.g.props" />
+    <None Include="obj\EmployeeSupportSystem.csproj.nuget.g.targets" />
+    <None Include="obj\project.nuget.cache" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.7" />
   </ItemGroup>
