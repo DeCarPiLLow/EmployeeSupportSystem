@@ -1,95 +1,182 @@
-﻿using Microsoft.AspNetCore.Mvc; // Using ASP.NET Core MVC framework
-using Microsoft.AspNetCore.Authentication; // Using ASP.NET Core authentication framework
-using Microsoft.AspNetCore.Authentication.Cookies; // Using cookie-based authentication
-using System.Security.Claims; // Using claims-based identity
-using EmployeeSupportSystem.Models; // Importing models from the EmployeeSupportSystem namespace
-using EmployeeSupportSystem.Data; // Importing data-related functionality
+﻿using Microsoft.AspNetCore.Mvc;
 
+using Microsoft.AspNetCore.Authentication;
+
+using Microsoft.AspNetCore.Authentication.Cookies;
+
+using System.Security.Claims;
+
+using EmployeeSupportSystem.Models;
+
+using EmployeeSupportSystem.Data;
+using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 namespace EmployeeSupportSystem.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly ILogger<AccountController> _logger; // Logger for the AccountController
 
-        // Constructor to initialize the logger
-        public AccountController(ILogger<AccountController> logger)
+        private readonly ILogger<AccountController> _logger;
+        private readonly DataContext _context;
+
+        public AccountController(ILogger<AccountController> logger, DataContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
         [HttpGet]
+
         public IActionResult Login()
+
         {
-            return View(); // Returns the Login view
+
+            return View(); // Display the login page
+
         }
 
         [HttpPost]
-        public IActionResult Login(LoginViewModel model)
+
+        public async Task<IActionResult> Login(LoginViewModel model)
+
         {
-            if (ModelState.IsValid) // Check if the model state is valid
+
+            if (ModelState.IsValid) // Check if the model is valid
+
             {
-                var user = UserData.ValidateUser(model.Id, model.Password); // Validate user credentials
+
+                // Validate the user using Employee ID and password
+                UserData userdataobj = new UserData(_context);
+
+                var user = userdataobj.ValidateUser(model.Id, model.Password);
+
                 if (user != null)
+
                 {
-                    // Create claims for the authenticated user
+
+                    // Creating claims for the logged-in user
+
                     var claims = new List<Claim>
+
                     {
-                        new Claim(ClaimTypes.Name, user.Username),
-                        new Claim(ClaimTypes.Role, user.UserRole.ToString())
+
+                        new Claim(ClaimTypes.Name, user.Id), // Using Employee ID instead of username for login
+
+                        new Claim(ClaimTypes.Role, user.UserRole.ToString()) // Storing user role in claims
+
                     };
-                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme); // Create claims identity
-                    var authProperties = new AuthenticationProperties { }; // Authentication properties
 
-                    // Sign in the user with the claims identity
-                    HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-                    // Redirect based on the user role
+                    var authProperties = new AuthenticationProperties { };
+
+                    // Sign in the user
+
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+
+                    // Redirect based on role
+
                     switch (user.UserRole)
+
                     {
+
                         case Role.Admin:
-                            return RedirectToAction("AdminPage", "Home"); // Redirect to Admin page
+
+                            return RedirectToAction("AdminPage", "Home");
+
                         case Role.SupportAgent:
-                            return RedirectToAction("SupportAgentPage", "Home"); // Redirect to Support Agent page
+
+                            return RedirectToAction("SupportAgentPage", "Home");
+
                         case Role.Employee:
-                            return RedirectToAction("EmployeePage", "Home"); // Redirect to Employee page
+
+                            return RedirectToAction("EmployeePage", "Home");
+
                         default:
-                            return RedirectToAction("Index", "Home"); // Redirect to default page
+
+                            return RedirectToAction("Index", "Home");
+
                     }
 
                 }
-                ModelState.AddModelError(string.Empty, "Invalid Login Attempt!!"); // Add error message if login fails
+
+                else
+
+                {
+
+                    // Add an error message if credentials are invalid
+
+                    ModelState.AddModelError(string.Empty, "Invalid employee ID or password.");
+
+                }
+
             }
-            return View(model); // Return view with model if login fails
+
+            return View(model); // Return the login page with validation errors, if any
+
         }
 
         [HttpGet]
+
         public IActionResult Signup()
+
         {
-            return View(); // Returns the Signup view
+
+            return View(); // Display the signup page
+
         }
 
         [HttpPost]
+
         public IActionResult Signup(SignupViewModel model)
+
         {
-            if (ModelState.IsValid) // Check if the model state is valid
+
+            if (ModelState.IsValid) // Check if the model is valid
+
             {
-                var result = UserData.CreateUser(model.Id, model.Username, model.Password, out string errorMessage); // Create a new user
+
+                // Attempt to create a new user
+                UserData userdataobj = new UserData(_context);
+                var result = userdataobj.CreateUser(model.Id, model.Username, model.Password, out string errorMessage);
+
                 if (result)
+
                 {
-                    return RedirectToAction("Login"); // Redirect to Login page on success
+
+                    // Redirect to the login page on successful signup
+
+                    return RedirectToAction("Login");
+
                 }
-                ModelState.AddModelError(string.Empty, errorMessage); // Add error message if user creation fails
+
+                // Add error message if user creation fails
+
+                ModelState.AddModelError(string.Empty, errorMessage);
+
             }
-            return View(model); // Return view with model if signup fails
+
+            return View(model); // Return the signup page with validation errors, if any
+
         }
 
         [HttpPost]
-        public async Task<IActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme); // Sign out the user
-            return RedirectToAction("Login"); // Redirect to Login page after logout
-        }
 
+        public async Task<IActionResult> Logout()
+
+        {
+
+            // Sign out the user
+
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            // Redirect to login page after logout
+
+            return RedirectToAction("Login");
+
+        }
 
     }
+
 }

@@ -1,77 +1,85 @@
-using EmployeeSupportSystem.Data; // Importing data-related functionality
-using EmployeeSupportSystem.Models; // Importing models from the EmployeeSupportSystem namespace
-using Microsoft.AspNetCore.Authorization; // Using ASP.NET Core authorization framework
-using Microsoft.AspNetCore.Mvc; // Using ASP.NET Core MVC framework
-using System.Diagnostics; // Using system diagnostics
-using System.Net.Sockets; // Using network-related functionality
-using System.Collections.Generic;
-using Microsoft.Extensions.Configuration.UserSecrets; // Using collections functionality
+using EmployeeSupportSystem.Data;
+using EmployeeSupportSystem.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Diagnostics;
+using System.Linq;
 
 namespace EmployeeSupportSystem.Controllers
 {
-    [Authorize] // Ensures that all actions in this controller require authentication
+    [Authorize]
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger; // Logger for the HomeController
+        private readonly ILogger<HomeController> _logger;
+        private readonly DataContext _context;
 
-        // Constructor to initialize the logger
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, DataContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
         public IActionResult Index()
         {
-            return View(); // Returns the Index view
+            return View();
         }
 
-        [Authorize(Roles = "Admin")] // Restricts access to users with the Admin role
+        [Authorize(Roles = "Admin")]
         public IActionResult AdminPage()
         {
-            var ticket = TicketData.GetAllTickets(); // Get all tickets
-            var user = UserData.GetAllUsers(); // Get all users
+            var tickets = _context.Tickets.ToList();
+            var users = _context.Users.ToList();
             var viewModel = new AdminViewModel
             {
-                Tickets = ticket,
-                Users = user,
+                Tickets = tickets,
+                Users = users
             };
-            return View(viewModel); // Returns the AdminPage view with the view model
+            return View(viewModel);
         }
 
-        [Authorize(Roles = "SupportAgent")] // Restricts access to users with the SupportAgent role
+        [Authorize(Roles = "SupportAgent")]
         public IActionResult SupportAgentPage()
         {
-            var tickets = TicketData.GetTicketsByAssignee(User.Identity.Name); // Get tickets assigned to the current user
-            var resolvedTickets = tickets.Where(t => t.Status == TicketStatus.Resolved).ToList(); // Filter resolved tickets
-            var pendingTickets = tickets.Where(t => t.Status != TicketStatus.Resolved).ToList(); // Filter pending tickets
+            var tickets = _context.Tickets
+                .Where(t => t.AssignedTo == User.Identity.Name)
+                .ToList();
+
+            var resolvedTickets = tickets.Where(t => t.Status == TicketStatus.Resolved).ToList();
+            var pendingTickets = tickets.Where(t => t.Status != TicketStatus.Resolved).ToList();
+
             var viewModel = new SupportAgentViewModel
             {
                 ResolvedTickets = resolvedTickets,
                 PendingTickets = pendingTickets
             };
-            return View(viewModel); // Returns the SupportAgentPage view with the view model
+
+            return View(viewModel);
         }
 
-        [Authorize(Roles = "Employee")] // Restricts access to users with the Employee role
+        [Authorize(Roles = "Employee")]
         public IActionResult EmployeePage()
         {
-            var tickets = TicketData.GetTicketsByCreator(User.Identity.Name); // Get tickets created by the current user
-            return View(tickets); // Returns the EmployeePage view with the tickets
+            var tickets = _context.Tickets
+                .Where(t => t.CreatedBy == User.Identity.Name)
+                .ToList();
+
+            return View(tickets);
         }
 
-        [Authorize(Roles = "Employee")] // Restricts access to users with the Employee role
+        [Authorize(Roles = "Employee")]
         public IActionResult CreateNewTicket()
         {
-            return View(new CreateNewTicketViewModel()); // Returns the CreateNewTicket view with an empty view model
+            return View(new CreateNewTicketViewModel());
         }
 
-        [HttpPost] // Handles POST requests
-        [Authorize(Roles = "Employee")] // Restricts access to users with the Employee role
+        [HttpPost]
+        [Authorize(Roles = "Employee")]
         public IActionResult CreateNewTicket(CreateNewTicketViewModel model)
         {
-            if (ModelState.IsValid) // Check if the model state is valid
+            if (ModelState.IsValid)
             {
-                // Create a new ticket with the provided details
                 var ticket = new Ticket
                 {
                     TicketID = Guid.NewGuid().ToString(),
@@ -79,36 +87,43 @@ namespace EmployeeSupportSystem.Controllers
                     Subject = model.Subject,
                     Description = model.Description,
                     Status = TicketStatus.Pending,
-                    CreatedAt = DateTime.Now,
+                    CreatedAt = DateTime.Now
                 };
-                TicketData.AddTicket(ticket); // Add the ticket to the data store
-                return RedirectToAction("EmployeePage"); // Redirect to EmployeePage after creating the ticket
+                _context.Tickets.Add(ticket);
+                _context.SaveChanges();
+
+                return RedirectToAction("EmployeePage");
             }
-            return View(model); // Return view with model if creation fails
+
+            return View(model);
         }
 
-        [HttpPost] // Handles POST requests
-        [Authorize(Roles = "Admin")] // Restricts access to users with the Admin role
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
         public IActionResult AssignTicket(string ticketId, string assignee)
         {
-            var ticket = TicketData.GetAllTickets().FirstOrDefault(t => t.TicketID == ticketId); // Find the ticket by ID
+            var ticket = _context.Tickets.FirstOrDefault(t => t.TicketID == ticketId);
             if (ticket != null)
             {
-                ticket.AssignedTo = assignee; // Assign the ticket to a user
-                ticket.Status = TicketStatus.Assigned; // Update the ticket status
-                TicketData.UpdateTicket(ticket); // Update the ticket in the data store
+                ticket.AssignedTo = assignee;
+                ticket.Status = TicketStatus.Assigned;
+                ticket.AssignedAt = DateTime.Now;
+                _context.Tickets.Update(ticket);
+                _context.SaveChanges();
             }
-            return RedirectToAction("AdminPage"); // Redirect to AdminPage after assigning the ticket
+
+            return RedirectToAction("AdminPage");
         }
 
-        [HttpPost] // Handles POST requests
-        [Authorize(Roles = "SupportAgent")] // Restricts access to users with the SupportAgent role
+        [HttpPost]
+        [Authorize(Roles = "SupportAgent")]
         public IActionResult UpdateTicketStatus(string ticketId, TicketStatus status)
         {
-            var ticket = TicketData.GetAllTickets().FirstOrDefault(t => t.TicketID == ticketId); // Find the ticket by ID
+            var ticket = _context.Tickets.FirstOrDefault(t => t.TicketID == ticketId);
             if (ticket != null)
             {
                 ticket.Status = status;
+
                 if (status == TicketStatus.Assigned)
                 {
                     ticket.AssignedAt = DateTime.Now;
@@ -121,32 +136,29 @@ namespace EmployeeSupportSystem.Controllers
                 {
                     ticket.ResolvedAt = DateTime.Now;
                 }
-                TicketData.UpdateTicket(ticket);
+
+                _context.Tickets.Update(ticket);
+                _context.SaveChanges();
             }
-            return RedirectToAction("SupportAgentPage"); // Redirect to SupportAgentPage after updating the ticket status
+
+            return RedirectToAction("SupportAgentPage");
         }
 
-        [Authorize(Roles = "Admin")] // Restricts access to users with the Admin role
+        [Authorize(Roles = "Admin")]
         public IActionResult ListUsers()
         {
-            var users = UserData.GetAllUsers(); // Get all users
-            return View(users); // Returns the ListUsers view with the users
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)] // Disable caching for the Error view
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier }); // Returns the Error view with the request ID
+            var users = _context.Users.ToList();
+            return View(users);
         }
 
         [Authorize(Roles = "Employee")]
         public IActionResult Analytics()
         {
-
             var userId = User.Identity.Name;
-            var tickets = TicketData.GetTicketsByCreator(userId);
+            var tickets = _context.Tickets
+                .Where(t => t.CreatedBy == userId)
+                .ToList();
 
-            
             var viewModel = tickets.Select(t => new TicketAnalyticsViewModel
             {
                 TicketID = t.Subject,
@@ -155,11 +167,6 @@ namespace EmployeeSupportSystem.Controllers
                 TimeActive = t.ResolvedAt.HasValue && t.ActiveAt.HasValue ? (t.ResolvedAt.Value - t.ActiveAt.Value).TotalHours : 0,
                 TimeResolved = t.ResolvedAt.HasValue ? (t.ResolvedAt.Value - t.CreatedAt).TotalHours : 0
             }).ToList();
-
-            //if (!viewModel.Any())
-            //{
-            //    return RedirectToAction("Index", "Home"); // Redirect if no tickets are found
-            //}
 
             return View(viewModel);
         }
@@ -167,8 +174,7 @@ namespace EmployeeSupportSystem.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult AdminAnalytics()
         {
-
-            var tickets = TicketData.GetAllTickets();
+            var tickets = _context.Tickets.ToList();
 
             var viewModel = tickets.Select(t => new TicketAnalyticsViewModel
             {
@@ -179,38 +185,33 @@ namespace EmployeeSupportSystem.Controllers
                 TimeResolved = t.ResolvedAt.HasValue ? (t.ResolvedAt.Value - t.CreatedAt).TotalHours : 0
             }).ToList();
 
-            //if (!viewModel.Any())
-            //{
-            //    return RedirectToAction("Index", "Home"); // Redirect if no tickets are found
-            //}
-
             return View(viewModel);
         }
-
 
         [Authorize(Roles = "SupportAgent")]
         public IActionResult SupportAnalytics()
         {
-
             var userId = User.Identity.Name;
-            var tickets = TicketData.GetTicketsByAssignee(userId);
-
+            var tickets = _context.Tickets
+                .Where(t => t.AssignedTo == userId)
+                .ToList();
 
             var viewModel = tickets.Select(t => new TicketAnalyticsViewModel
             {
                 TicketID = t.Subject,
-                TimePending = 0,//t.AssignedAt.HasValue ? (t.AssignedAt.Value - t.CreatedAt).TotalHours : 0,
+                TimePending = t.AssignedAt.HasValue ? (t.AssignedAt.Value - t.CreatedAt).TotalHours : 0,
                 TimeAllocated = t.ActiveAt.HasValue && t.AssignedAt.HasValue ? (t.ActiveAt.Value - t.AssignedAt.Value).TotalHours : 0,
                 TimeActive = t.ResolvedAt.HasValue && t.ActiveAt.HasValue ? (t.ResolvedAt.Value - t.ActiveAt.Value).TotalHours : 0,
                 TimeResolved = t.ResolvedAt.HasValue ? (t.ResolvedAt.Value - t.CreatedAt).TotalHours : 0
             }).ToList();
 
-            //if (!viewModel.Any())
-            //{
-            //    return RedirectToAction("Index", "Home"); // Redirect if no tickets are found
-            //}
-
             return View(viewModel);
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

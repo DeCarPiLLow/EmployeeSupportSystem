@@ -1,35 +1,44 @@
-﻿namespace EmployeeSupportSystem.Data
+﻿using System;
+using System.Linq;
+
+namespace EmployeeSupportSystem.Data
 {
     public class TicketData
     {
-        private static List<Ticket> Tickets = new List<Ticket>(); // In-memory list to store tickets
+        private readonly DataContext _context;
 
-        public static List<Ticket> GetAllTickets()
+        public TicketData(DataContext context)
         {
-            return Tickets; // Returns the list of all tickets
+            _context = context;
         }
 
-        public static List<Ticket> GetTicketsByCreator(string creator)
+        public List<Ticket> GetAllTickets()
+        {
+            return _context.Tickets.ToList(); // Returns the list of all tickets
+        }
+
+        public List<Ticket> GetTicketsByCreator(string creator)
         {
             // Returns tickets created by the specified user
-            return Tickets.Where(ticket => ticket.CreatedBy == creator).ToList();
+            return _context.Tickets.Where(ticket => ticket.CreatedBy == creator).ToList();
         }
 
-        public static List<Ticket> GetTicketsByAssignee(string assignee)
+        public List<Ticket> GetTicketsByAssignee(string assignee)
         {
             // Returns tickets assigned to the specified user
-            return Tickets.Where(ticket => ticket.AssignedTo == assignee).ToList();
+            return _context.Tickets.Where(ticket => ticket.AssignedTo == assignee).ToList();
         }
 
-        public static void AddTicket(Ticket ticket)
+        public void AddTicket(Ticket ticket)
         {
-            Tickets.Add(ticket); // Adds a new ticket to the list
+            _context.Tickets.Add(ticket); // Adds a new ticket to the list
+            _context.SaveChanges();
         }
 
 
-        public static void UpdateTicket(Ticket updatedTicket)
+        public void UpdateTicket(Ticket updatedTicket)
         {
-            var ticket = Tickets.FirstOrDefault(t => t.TicketID == updatedTicket.TicketID);// Find the ticket to update by ID
+            var ticket = _context.Tickets.FirstOrDefault(t => t.TicketID == updatedTicket.TicketID);// Find the ticket to update by ID
             if (ticket != null)
             {
                 ticket.AssignedTo = updatedTicket.AssignedTo; // Update the assignee
@@ -43,6 +52,7 @@
                 {
                     ticket.ActiveAt = DateTime.Now;
                 }
+                _context.SaveChanges();
             }
         }
 
