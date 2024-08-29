@@ -2,6 +2,14 @@
 
 @{
     ViewData["Title"] = "List Users";
+
+    // Display success message if present
+    if (TempData["SuccessMessage"] != null)
+    {
+        <div id="successMessage" class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
 }
 
 <h2>List of Users</h2>
@@ -11,6 +19,7 @@
             <th>Id</th>
             <th>Username</th>
             <th>User Role</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -20,7 +29,35 @@
                 <td>@user.Id</td>
                 <td>@user.Username</td>
                 <td>@user.UserRole</td>
+                <td>
+                    @if (user.UserRole == Role.Employee)
+                    {
+                        <form asp-action="ChangeUserRole" asp-route-id="@user.Id" method="post">
+                            <button type="submit" class="btn btn-primary">Change to Support Agent</button>
+                        </form>
+                    }
+                    else if (user.UserRole == Role.SupportAgent)
+                    {
+                        <span>Support Agent</span>
+                    }
+                    else if (user.UserRole == Role.Admin)
+                    {
+                        <span>Admin</span>
+                    }
+                </td>
             </tr>
         }
     </tbody>
 </table>
+
+@section Scripts {
+    <script>
+        // Disappear success message after 3 seconds
+        setTimeout(function () {
+            var messageElement = document.getElementById('successMessage');
+            if (messageElement) {
+                messageElement.style.display = 'none';
+            }
+        }, 3000);
+    </script>
+}
