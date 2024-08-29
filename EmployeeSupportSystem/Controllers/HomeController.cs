@@ -141,8 +141,6 @@ namespace EmployeeSupportSystem.Controllers
             return RedirectToAction("ListUsers");
         }
 
-
-
         // Updates the status of a ticket; only accessible to users with the SupportAgent role
         [HttpPost]
         [Authorize(Roles = "SupportAgent")]

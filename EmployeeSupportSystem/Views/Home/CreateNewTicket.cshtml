@@ -1,23 +1,4 @@
-﻿@* @model CreateNewTicketViewModel
-
-@{
-    ViewData["Title"] = "Create New Ticket";
-}
-
-<h2>Create a New Ticket</h2>
-<form asp-action="CreateNewTicket" method="post">
-    <div class="form-group">
-        <label asp-for="Subject"></label>
-        <input asp-for="Subject" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label asp-for="Description"></label>
-<textarea asp-for="Description" class="form-control"></textarea>
-    </div>
-    <button type="submit" class="btn btn-primary">Create Ticket</button>
-</form> *@
-
-@model CreateNewTicketViewModel
+﻿@model CreateNewTicketViewModel
 
 @{
     ViewData["Title"] = "Create New Ticket";

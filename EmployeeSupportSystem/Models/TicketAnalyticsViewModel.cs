@@ -8,5 +8,4 @@
         public double TimeActive { get; set; }
         public double TimeResolved { get; set; }
     }
-
 }

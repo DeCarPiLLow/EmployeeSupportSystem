@@ -11,7 +11,6 @@ namespace EmployeeSupportSystem.Controllers
     {
         // Logger for logging messages and errors
         private readonly ILogger<AccountController> _logger;
-
         // Database context for interacting with the data source
         private readonly DataContext _context;
 

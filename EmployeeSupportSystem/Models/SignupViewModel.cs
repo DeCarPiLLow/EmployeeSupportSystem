@@ -21,6 +21,5 @@ namespace EmployeeSupportSystem.Models
         [Display(Name ="Confirm Password")]
         [Compare("Password", ErrorMessage = "Password and Confirm Password doesn't match!!")]
         public string ConfirmPassword { get; set; }
-
     }
 }

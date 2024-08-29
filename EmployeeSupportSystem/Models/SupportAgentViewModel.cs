@@ -4,6 +4,5 @@
     {
         public List<Ticket> ResolvedTickets { get; set; }
         public List<Ticket> PendingTickets { get; set; }
-
     }
 }

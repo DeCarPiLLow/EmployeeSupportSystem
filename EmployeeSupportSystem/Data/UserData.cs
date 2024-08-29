@@ -1,5 +1,4 @@
 ﻿using EmployeeSupportSystem.Models; // Importing models from the EmployeeSupportSystem namespace
-using System.Linq;
 using System.Text.RegularExpressions; // Using regular expressions for password validation
 
 namespace EmployeeSupportSystem.Data

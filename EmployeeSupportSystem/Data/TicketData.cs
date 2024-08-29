@@ -32,7 +32,6 @@
             _context.SaveChanges();
         }
 
-
         public void UpdateTicket(Ticket updatedTicket)
         {
             var ticket = _context.Tickets.FirstOrDefault(t => t.TicketID == updatedTicket.TicketID);// Find the ticket to update by ID
@@ -52,6 +51,5 @@
                 _context.SaveChanges();
             }
         }
-
     }
 }
