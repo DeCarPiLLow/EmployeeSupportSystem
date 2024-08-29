@@ -23,20 +23,23 @@
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Time Pending',
+                    label: 'Time Taken for Allocation',
                     data: timePending,
                     backgroundColor: 'rgba(255, 0, 0, 0.8)',
-                    stack: 'stack0'
+                    stack: 'stack0',
+                    barThickness: 100
                 }, {
-                    label: 'Time Allocated',
+                    label: 'Time Taken to Start Work on the Ticket',
                     data: timeAllocated,
                     backgroundColor: 'rgba(54, 162, 235, 0.8)',
-                    stack: 'stack0'
+                    stack: 'stack0',
+                    barThickness: 100
                 }, {
                     label: 'Time Active',
                     data: timeActive,
                     backgroundColor: 'rgba(0, 206, 86, 0.8)',
-                    stack: 'stack0'
+                    stack: 'stack0',
+                    barThickness: 100
                 }]
             },
             options: {
@@ -48,7 +51,9 @@
                     tooltip: {
                         callbacks: {
                             label: function (tooltipItem) {
-                                return tooltipItem.dataset.label + ': ' + tooltipItem.raw + ' hrs';
+                                var seconds = (tooltipItem.raw) * 60;
+                                var secondslimit = seconds.toFixed(2);
+                                return tooltipItem.dataset.label + ': ' + secondslimit + ' mins';
                             }
                         }
                     }
