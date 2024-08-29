@@ -4,9 +4,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
 using EmployeeSupportSystem.Models;
 using EmployeeSupportSystem.Data;
-using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 
 namespace EmployeeSupportSystem.Controllers
 {

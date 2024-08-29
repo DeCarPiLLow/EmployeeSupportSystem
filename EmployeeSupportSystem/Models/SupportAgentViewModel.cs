@@ -1,8 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using System.Collections.Generic;
-
-namespace EmployeeSupportSystem.Models
+﻿namespace EmployeeSupportSystem.Models
 {
     public class SupportAgentViewModel
     {

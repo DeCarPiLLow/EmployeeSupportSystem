@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace EmployeeSupportSystem.Models
+﻿namespace EmployeeSupportSystem.Models
 {
     public class AdminViewModel
     {
