@@ -19,7 +19,6 @@
             <th>Id</th>
             <th>Username</th>
             <th>User Role</th>
-            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -28,8 +27,8 @@
             <tr>
                 <td>@user.Id</td>
                 <td>@user.Username</td>
-                <td>@user.UserRole</td>
                 <td>
+                    @user.UserRole
                     @if (user.UserRole == Role.Employee)
                     {
                         <form asp-action="ChangeUserRole" asp-route-id="@user.Id" method="post">
