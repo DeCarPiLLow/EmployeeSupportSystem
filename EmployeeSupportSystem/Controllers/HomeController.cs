@@ -105,6 +105,13 @@ namespace EmployeeSupportSystem.Controllers
             return View(model); // If model validation fails, return the form with errors
         }
 
+        //[HttpPost]
+        //[Authorize(Roles = "Employee")]
+        //public IActionResult ApplyForAgent()
+        //{
+
+        //}
+
         // Assigns a ticket to a user (assignee); only accessible to users with the Admin role
         [HttpPost]
         [Authorize(Roles = "Admin")]
